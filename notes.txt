@@ -1,0 +1,64 @@
+Sharq script exceptions:
+redis.exceptions.ResponseError: Error running script (call to f_f81db10d47524de49022d8f8e037fd016fe3bcc8): @user_script:49: user_script:49: attempt to perform arithmetic on local 'interval' (a boolean value)
+redis.exceptions.ResponseError: Error running script (call to f_743093cc8627b20bfbe74ccdfb23f0fbccbea010): @user_script:44: user_script:44: attempt to perform arithmetic on local 'interval' (a boolean value)
+
+
+(env) prashanthpai@localhost: sharq-testing  $ python3 requeue_script.py
+Traceback (most recent call last):
+  File "/Users/prashanthpai/mysrc/sharq-testing/requeue_script.py", line 8, in <module>
+    response = sq.requeue()
+  File "/Users/prashanthpai/mysrc/sharq-testing/env/lib/python3.9/site-packages/sharq/queue.py", line 332, in requeue
+    self.finish(
+  File "/Users/prashanthpai/mysrc/sharq-testing/env/lib/python3.9/site-packages/sharq/queue.py", line 241, in finish
+    raise BadArgumentException('`queue_type` has an invalid value.')
+sharq.exceptions.BadArgumentException: `queue_type` has an invalid value.
+
+
+
+
+
+127.0.0.1:6379> KEYS *
+1) "sharq_server:sms:user001:enqueue_counter:1606120380000"
+2) "sharq_server:sms:user001"
+3) "sharq_server:ready:queue_type"
+4) "sharq_server:enqueue_counter:1606120380000"
+5) "sharq_server:payload"
+6) "sharq_server:interval"
+7) "sharq_server:sms:user001:requeues_remaining"
+8) "sharq_server:sms"
+
+
+
+GET sharq_server:sms:user001:enqueue_counter:1606120380000       This expires
+"1"
+
+
+127.0.0.1:6379> LRANGE sharq_server:sms:user001 0 -1
+1) "cea84623-be35-4368-90fa-7736570dabc4"
+
+
+127.0.0.1:6379> SMEMBERS sharq_server:ready:queue_type
+1) "sms"
+
+
+GET sharq_server:enqueue_counter:1606120380000                   This expires
+"1"
+
+
+HGETALL sharq_server:payload
+1) "sms:user001:cea84623-be35-4368-90fa-7736570dabc4"
+2) "\"\x81\xa7message\xachello, world\""
+
+
+GETALL sharq_server:interval
+1) "sms:user001"
+2) "1000"
+
+
+HGETALL sharq_server:sms:user001:requeues_remaining
+1) "cea84623-be35-4368-90fa-7736570dabc4"
+2) "-1"
+
+
+ZRANGE sharq_server:sms 0 -1
+1) "user001"
