@@ -1,0 +1,12 @@
+
+
+
+(env) prashanthpai@localhost: sharq-testing  $ python3 requeue_script.py
+Traceback (most recent call last):
+  File "/Users/prashanthpai/mysrc/sharq-testing/requeue_script.py", line 8, in <module>
+    response = sq.requeue()
+  File "/Users/prashanthpai/mysrc/sharq-testing/env/lib/python3.9/site-packages/sharq/queue.py", line 332, in requeue
+    self.finish(
+  File "/Users/prashanthpai/mysrc/sharq-testing/env/lib/python3.9/site-packages/sharq/queue.py", line 241, in finish
+    raise BadArgumentException('`queue_type` has an invalid value.')
+sharq.exceptions.BadArgumentException: `queue_type` has an invalid value.

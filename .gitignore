@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.sw?
+*.egg
+*.egg-info
+.tox
+pycscope.*
+cscope.*
+dist
+build
+
+env/
