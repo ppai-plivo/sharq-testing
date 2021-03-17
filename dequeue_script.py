@@ -7,6 +7,7 @@ from sharq import SharQ
 
 STOP_THREADS = False
 THREAD_COUNT = 4
+default_job_requeue_limit = 1
 
 deqs = defaultdict(int)
 acks = defaultdict(int)
@@ -62,3 +63,17 @@ if __name__ == '__main__':
           OrderedDict(sorted(acks.items(), key=lambda x: int(x[0]))))
     print("\nNot Acked:\n",
           OrderedDict(sorted(no_acks.items(), key=lambda x: int(x[0]))))
+
+    # verify that total dequeues do not exceed the limit
+    for key, value in deqs.items():
+        assert(value == (default_job_requeue_limit + 1) or value == 1)
+
+    # verify that items that have been ACKd do not appear again
+    # and have appeared exactly once.
+    for key, value in acks.items():
+        assert(value == 1)
+
+    # verify that items that have not been ackd, have been dequeued
+    # more than once but less than the requeue limit
+    for key, value in no_acks.items():
+        assert(deqs[key] > 1 and deqs[key] <= (default_job_requeue_limit + 1))

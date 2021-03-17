@@ -4,7 +4,7 @@ from time import sleep
 from sharq import SharQ
 
 
-THREAD_COUNT = 4
+THREAD_COUNT = 1
 REQUEUE_INTERVAL = 5
 STOP_THREADS = False
 
