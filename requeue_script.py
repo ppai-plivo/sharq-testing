@@ -1,10 +1,11 @@
 import signal
 import threading
+from redis.exceptions import LockError
 from time import sleep
 from sharq import SharQ
 
 
-THREAD_COUNT = 1
+THREAD_COUNT = 4
 REQUEUE_INTERVAL = 5
 STOP_THREADS = False
 
@@ -12,10 +13,17 @@ STOP_THREADS = False
 def requeue_worker(worker_id):
     sq = SharQ('./sharq.conf')
     while STOP_THREADS is False:
-        response = sq.requeue()
-        if response is not None:
-            print(response)
-        sleep(REQUEUE_INTERVAL)
+        try:
+            with sq.redis_client().lock('sharq-requeue-lock-key', timeout=15):
+                try:
+                    sq.requeue()
+                except Exception as e:
+                    traceback.print_exc()
+        except LockError:
+            # the lock wasn't acquired within specified time
+            pass
+        finally:
+            sleep(REQUEUE_INTERVAL)
     print("thread-{}: exiting".format(worker_id))
 
 
