@@ -6,6 +6,6 @@ Usecases:
 * Display number of messages in queue in realtime via console.
 * Estimate how long it would take for messages to be dequeued (we already have interval).
 
-### Batch enqueue
+### Message unit ratelimiting
 
-Usecase: Request to send a SMS towards multiple destinations can timeout as Plivo API is basically calling enqueue in a loop for every destination number. This means that the customer/client would get a 5xx response despite a part of messages being successfully queued. This makes the API operation inconsistent.
+Currently ratelimiting is applied per message regardless of no. of units. This can be changed/tweaked to be applied to message units. But why? The industry has supported 1 message per second for long codes however Plivo has historically supported 1 message per 4 seconds for long code. I was told by Haiku, the then PM that this extra buffer was to take care of carriers applying ratelimits on a per unit basis.
